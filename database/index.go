@@ -7,6 +7,7 @@ import (
   "database/sql"
   "github.com/mattn/go-sqlite3"
   "github.com/jkk111/indigo/assets"
+  "github.com/jkk111/indigo/util"
 )
 
 var Instance * sql.DB
@@ -70,6 +71,8 @@ func init() {
   }
 
   data_path := path.Join(current.HomeDir, ".indigo")
+  util.Mkdir(data_path)
+  util.Hide(data_path)
   db_path := path.Join(data_path, "store.db")
   _ = sqlite3.SQLiteDriver{}
   db, err := sql.Open("sqlite3", db_path)

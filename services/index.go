@@ -5,9 +5,12 @@ import (
   "os/exec"
   "os"
   "fmt"
+  "strings"
+  "regexp"
   "github.com/jkk111/indigo/util"
   "github.com/jkk111/indigo/logger"
   "github.com/jkk111/indigo/database"
+  "github.com/jkk111/indigo/git"
   Proxy "github.com/jkk111/indigo/proxy"
 )
 
@@ -19,9 +22,40 @@ type ActiveService struct {
   cmd * exec.Cmd
 }
 
-// Represents a specific clone of a repo!
-func RepoId() {
+func ParseCommitList(input string, ref string) (string, bool) {
+  fmt.Println(input)
+  input = strings.TrimSpace(input)
 
+
+  if input == "" {
+    return "", false
+  }
+
+  hashes := strings.Split(input, "\n")
+  re := regexp.MustCompile(`\s+`)
+
+  fmt.Println(hashes)
+
+  for _, str := range hashes {
+    parts := re.Split(str, -1)
+
+    if parts[1] == ref {
+      return parts[0], true
+    }
+  }
+
+  return "", false
+}
+
+// Represents a specific clone of a repo!
+func RepoId(repo string) {
+  hash := git.BranchHash(repo, "master")
+
+  if hash == "" {
+    panic("Invalid Repo/Branch")
+  }
+
+  fmt.Println(hash)
 }
 
 func NewActiveService(service_id string, start []string, env []string) * ActiveService {
@@ -84,7 +118,7 @@ func Load() {
     instance_name := fmt.Sprintf("%s-%d", service.Name, instance_no)
     NewActiveService(service.Name, []string { service.Start }, env)
 
-    fmt.Printf("Service: %+v\n", service, instance_no)
+    fmt.Printf("Service: %+v\n", service, instance_name)
 
     proxy.AddRoute(service.Host, service.Path, ln_port, true)
 

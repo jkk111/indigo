@@ -12,6 +12,7 @@ import "github.com/jkk111/indigo/admin"
 import "github.com/jkk111/indigo/database"
 import "github.com/jkk111/indigo/util"
 import "github.com/jkk111/indigo/services"
+import "github.com/jkk111/indigo/git"
 
 var proxy = Proxy.NewReverseProxy()
 var srv http.Server
@@ -77,6 +78,12 @@ func StartServer() {
 }
 
 func main() {
+  branches := git.LsRemote("https://github.com/jkk111/indigo")
+  branches[0].Clone()
+
+  fmt.Println(branches)
+
+  os.Exit(0)
   services.Load()
   StartServer()
 }

@@ -2,10 +2,6 @@ package database
 
 import (
   "fmt"
-  "path"
-  "flag"
-  "os"
-  "os/user"
   "database/sql"
   "encoding/json"
   "github.com/mattn/go-sqlite3"
@@ -127,27 +123,11 @@ func Services() []*Service {
 
 func init() {
   fmt.Println("Initializing Database")
-  current, err := user.Current()
 
-  if err != nil {
-    panic(err)
-  }
-
-  data_path := path.Join(current.HomeDir, ".indigo")
-
-  resetPtr := flag.Bool("reset", false, "Clear local data.")
-  flag.Parse()
-
-  reset := *resetPtr
-
-  if reset {
-    os.RemoveAll(data_path)
-  }
-
-  util.Mkdir(data_path)
-  util.Hide(data_path)
-  db_path := path.Join(data_path, "store.db")
+  db_path := util.Path("store.db")
+ 
   _ = sqlite3.SQLiteDriver{}
+
   db, err := sql.Open("sqlite3", db_path)
   table_setup_queries := string(assets.MustAsset("resources/setup.sql"))
 

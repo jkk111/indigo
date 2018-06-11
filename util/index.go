@@ -2,6 +2,7 @@ package util
 
 import (
   "os"
+  "github.com/satori/go.uuid"
 )
 
 const FILE_MODE = 0700
@@ -13,4 +14,8 @@ func Mkdir(path string) {
       panic(err)
     }
   }
+}
+
+func RandomId() string {
+  return uuid.Must(uuid.NewV4()).String()
 }

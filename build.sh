@@ -1,2 +1,2 @@
 go-bindata -pkg assets -o assets/bindata.go resources/...
-go build && ./indigo
+go install

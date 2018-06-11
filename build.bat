@@ -1,3 +1,3 @@
 @echo off
 go-bindata -pkg assets -o assets/bindata.go resources/...
-go build && indigo.exe
+go install && indigo.exe

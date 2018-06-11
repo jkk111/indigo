@@ -14,6 +14,7 @@ import (
 )
 
 var transport * BetterRoundTripper = newBetterRoundTripper(nil)
+var ProxyInstance * ReverseProxy
 
 type BetterRoundTripper struct {
   transport http.RoundTripper
@@ -164,12 +165,17 @@ type ReverseProxy struct {
 }
 
 func NewReverseProxy() * ReverseProxy {
-  return &ReverseProxy {
+  rp := &ReverseProxy {
     proxy_rules: NewProxyRuleSet(),
   }
+
+  ProxyInstance = rp
+
+  return rp
 }
 
 func (this * ReverseProxy) AddRoute(domain string, url string, route string, local bool) {
+  fmt.Println("Add Route", this)
   this.proxy_rules.Add(domain, url, route, local)
 }
 
@@ -254,4 +260,8 @@ func (this * ReverseProxy) Router(w http.ResponseWriter, r * http.Request) {
 
 func SetProxyTransport(tr http.RoundTripper) {
   transport.transport = tr
+}
+
+func Instance() * ReverseProxy {
+  return ProxyInstance
 }

@@ -5,12 +5,13 @@ import "fmt"
 import "os"
 import "os/signal"
 import "io/ioutil"
-import Proxy "github.com/jkk111/indigo/proxy"
 import "os/user"
 import "path"
+import Proxy "github.com/jkk111/indigo/proxy"
 import "github.com/jkk111/indigo/admin"
 import "github.com/jkk111/indigo/database"
 import "github.com/jkk111/indigo/util"
+import "github.com/jkk111/indigo/services"
 
 var proxy = Proxy.NewReverseProxy()
 var srv http.Server
@@ -45,6 +46,7 @@ func cleanup(c chan os.Signal) {
 }
 
 func init() {
+  fmt.Println("Main Init")
   current, err := user.Current()
 
   if err != nil {
@@ -75,13 +77,6 @@ func StartServer() {
 }
 
 func main() {
-  services := database.Services()
-
-  for _, service := range services {
-    proxy.AddRoute(service.Host, service.Path, util.GetSocket(service.Name, 0), true)
-  }
-
-  fmt.Printf("Added %d Routes\n", len(services))
-
+  services.Load()
   StartServer()
 }

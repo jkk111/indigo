@@ -114,18 +114,8 @@ func Load() {
     ln_port := util.GetSocket(service.Name, int(instance_no))
     port := fmt.Sprintf("PORT=%s", ln_port)
     env = append(env, port)
-
-    instance_name := fmt.Sprintf("%s-%d", service.Name, instance_no)
     NewActiveService(service.Name, []string { service.Start }, env)
-
-    fmt.Printf("Service: %+v\n", service, instance_name)
-
     proxy.AddRoute(service.Host, service.Path, ln_port, true)
-
-    // services.NewActiveService("app", []string {"node", "-e", "console.log('go is great');" })
-    // services.NewActiveService("app2", []string {"node", "-e", "console.log('node is great');" })
-    // services.NewActiveService("app3", []string {"node", "-e", "console.log('python is great');" })
-    // services.NewActiveService("app4", []string {"node", "-e", "console.log('java is not so great');" })
   }
 }
 

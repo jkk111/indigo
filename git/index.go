@@ -67,15 +67,16 @@ func (this Branch) Clone() {
   run("clone", "-b", this.Branch(), this.repo, util.Path(path.Join("repos", this.hash)))
 }
 
-func LsRemote(repo string) []Branch {
+func LsRemote(repo string) map[string]Branch {
   remote := run("ls-remote", "--heads", repo)
   remotes := strings.Split(remote, "\n")
-  branches := make([]Branch, len(remotes))
+  branches := make(map[string]Branch, len(remotes))
   re := regexp.MustCompile(`\s+`)
 
-  for i, branch := range remotes {
+  for _, branch := range remotes {
     parts := re.Split(branch, -1)
-    branches[i] = Branch{ repo: repo, hash: parts[0], ref: parts[1] }
+    b := Branch{ repo: repo, hash: parts[0], ref: parts[1] }
+    branches[b.Branch()] = b
   }
 
   return branches

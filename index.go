@@ -66,12 +66,24 @@ func init() {
   go cleanup(c)
 }
 
+func LookupEnv(key string) string {
+  return os.Getenv(key)
+}
+
 func StartServer() {
   mux := http.NewServeMux()
   mux.HandleFunc("/", proxy.Router)
   mux.Handle("/admin/", admin.Router)
 
-  srv = http.Server{Addr: ":80", Handler: mux}
+  port := LookupEnv("PORT")
+
+  if port == "" {
+    port = ":80"
+  } else if port[0] != ':' {
+    port = fmt.Sprintf(":%s", port)
+  }
+
+  srv = http.Server{Addr: port, Handler: mux}
   if err := srv.ListenAndServe(); err != nil {
     fmt.Println(err)
   }

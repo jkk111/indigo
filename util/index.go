@@ -4,7 +4,7 @@ import (
   "os"
   "fmt"
   "flag"
-  "path"
+  path "path/filepath"
   "os/user"
   "github.com/satori/go.uuid"
 )
@@ -23,6 +23,17 @@ func Mkdir(path string) {
 func Rmdir(path string) {
   fmt.Println("Removing", path)
   os.RemoveAll(path) 
+}
+
+func Exists(path string) bool {
+  if _, err := os.Stat(path); err != nil {
+    if os.IsNotExist(err) {
+      return false
+    } else {
+      panic(err)
+    }
+  }
+  return true
 }
 
 func RandomId() string {

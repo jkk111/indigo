@@ -60,6 +60,9 @@ func CreateLogInstance(name string, out io.ReadCloser, err io.ReadCloser) * LogI
     // Dump to file until process exits
     fmt.Println(io.Copy(fout, out))
     fmt.Println(io.Copy(ferr, err))
+
+    fout.Close()
+    ferr.Close()
   }()
 
   inst := &LogInstance{ 

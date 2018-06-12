@@ -1,17 +1,19 @@
 CREATE TABLE IF NOT EXISTS services (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
-  desc TEXT NOT NULL DEFAULT "echo 'No Description Specified'",
+  desc TEXT NOT NULL DEFAULT "",
   host TEXT NOT NULL, 
   path TEXT NOT NULL, 
-  repo TEXT NOT NULL DEFAULT "echo 'No Repo Specified'",
-  start TEXT NOT NULL DEFAULT "echo 'No Start Command Specified'",
-  args TEXT NOT NULL DEFAULT "[]",
+  repo TEXT NOT NULL DEFAULT "",
+  branch TEXT NOT NULL DEFAULT "master",
+  hash TEXT NOT NULL DEFAULT "",
+  start TEXT NOT NULL DEFAULT "node",
+  args TEXT NOT NULL DEFAULT `[ "-e", "console.log('No Command Specified')" ]`,
   env TEXT NOT NULL DEFAULT "[]",
-  install TEXT NOT NULL DEFAULT "echo 'No Install Command Specified'",
-  installArgs TEXT NOT NULL DEFAULT "[]",
+  install TEXT NOT NULL DEFAULT "node",
+  installArgs TEXT NOT NULL DEFAULT `[ "-e", "console.log('No Install Specified')" ]`,
   installEnv TEXT NOT NULL DEFAULT "[]",
-  enabled BOOL NOT NULL DEFAULT 1,
+  enabled BOOLEAN NOT NULL DEFAULT 1,
   UNIQUE(host, path)
   UNIQUE(name)
 );

@@ -254,6 +254,7 @@ func (this * ReverseProxy) Router(w http.ResponseWriter, r * http.Request) {
     proxy.ServeHTTP(w, r)
   
   } else {
+    fmt.Println("404", host, path)
     w.Write([]byte("Invalid Route"))
   }
 }

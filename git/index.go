@@ -1,6 +1,7 @@
 package git
 
 import (
+  "encoding/json"
   "os/exec"
   "io"
   "io/ioutil"
@@ -14,9 +15,19 @@ import (
 const ref_prefix_len = 11
 
 type Branch struct {
-  repo string 
-  hash string
-  ref string
+  Repo string `json:"repo"`
+  Hash string `json:"hash"`
+  Ref string `json:"ref"`
+}
+
+func (this * Branch) String() string {
+  data, err := json.Marshal(&this)
+
+  if err != nil {
+    panic(err)
+  }
+
+  return string(data)
 }
 
 func run(args ...string) string {
@@ -50,32 +61,31 @@ func run(args ...string) string {
   return output
 }
 
-func (this Branch) Ref() string {
-  return  this.ref
+func (this * Branch) Branch() string {
+  return this.Ref[ref_prefix_len:]
 }
 
-func (this Branch) Branch() string {
-  return this.ref[ref_prefix_len:]
+func (this * Branch) Clone() {
+  util.Rmdir(util.Path(path.Join("repos", this.Hash)))
+  run("clone", "-b", this.Branch(), this.Repo, util.Path(path.Join("repos", this.Hash)))
+  fmt.Println("Cloned")
 }
 
-func (this Branch) Hash() string {
-  return this.hash
-}
+func LsRemote(repo string) map[string]*Branch {
+  if repo == "" {
+    return nil
+  }
 
-func (this Branch) Clone() {
-  util.Rmdir(util.Path(path.Join("repos", this.hash)))
-  run("clone", "-b", this.Branch(), this.repo, util.Path(path.Join("repos", this.hash)))
-}
 
-func LsRemote(repo string) map[string]Branch {
   remote := run("ls-remote", "--heads", repo)
   remotes := strings.Split(remote, "\n")
-  branches := make(map[string]Branch, len(remotes))
+  branches := make(map[string]*Branch, len(remotes))
   re := regexp.MustCompile(`\s+`)
 
   for _, branch := range remotes {
+    fmt.Println(branch)
     parts := re.Split(branch, -1)
-    b := Branch{ repo: repo, hash: parts[0], ref: parts[1] }
+    b := &Branch{ Repo: repo, Hash: parts[0], Ref: parts[1] }
     branches[b.Branch()] = b
   }
 

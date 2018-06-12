@@ -78,8 +78,8 @@ func StartServer() {
 }
 
 func main() {
-  branches := git.LsRemote("https://github.com/jkk111/indigo")
-  branches["master"].Clone()
+  git.LsRemote("https://github.com/jkk111/indigo")
+  // branches["master"].Clone()
 
   services.Load()
   StartServer()

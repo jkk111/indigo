@@ -18,5 +18,5 @@ func Dial(path string) (net.Conn, error) {
 
 func Listen(path string) (net.Listener, error) {
   path = strings.Replace(path, ":80", "", -1)
-  return net.Listen("unix", addr) 
+  return net.Listen("unix", path) 
 }

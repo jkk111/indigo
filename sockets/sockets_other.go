@@ -13,7 +13,7 @@ const TIMEOUT = time.Second * 30
 func Dial(path string) (net.Conn, error) {
   path = strings.Replace(path, ":80", "", -1)
   timeout := TIMEOUT
-  return net.Dial("unix", addr) 
+  return net.Dial("unix", path) 
 }
 
 func Listen(path string) (net.Listener, error) {

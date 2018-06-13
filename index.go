@@ -12,7 +12,6 @@ import "github.com/jkk111/indigo/admin"
 import "github.com/jkk111/indigo/database"
 import "github.com/jkk111/indigo/util"
 import "github.com/jkk111/indigo/services"
-import "github.com/jkk111/indigo/git"
 
 var proxy = Proxy.NewReverseProxy()
 var srv http.Server

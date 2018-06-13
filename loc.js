@@ -23,12 +23,12 @@ let loc = 0;
 
 let files = get_files(__dirname)
 files.splice(files.indexOf(path.join(__dirname, 'assets', 'bindata.go')), 1)
+files = files.filter(f => f.indexOf(path.join(__dirname, '.git')) != 0)
 files.splice(files.indexOf(path.join(__dirname, 'indigo.exe')), 1)
 
 for(var file of files) {
   let data = fs.readFileSync(file, 'utf8')
   loc += data.split('\n').length
-  console.log(file, data.split('\n'))
 }
 
 console.log(loc)

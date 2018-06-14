@@ -7,6 +7,6 @@ import (
 
 func TestSocketRoundTrip(t * testing.T) {
   addr := util.GetSocket("Testing", 0)
-  brt := newBetterRoundTripper(nil)
+  brt := NewBetterRoundTripper(nil)
   brt.socketRoundTrip(nil, "", addr)
 }

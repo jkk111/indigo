@@ -13,11 +13,19 @@ const REPO = "https://github.com/jkk111/indigo"
 
 func Setup() {
   util.BASE_NAME = ".indigo-test"
+  if database.Instance != nil {
+    database.Instance.Close()
+  }
+
+  fmt.Println("Exists", util.Exists(util.DataDir()))
+
+  util.Rmdir(util.DataDir())
+  util.Mkdir(util.DataDir())
   database.Setup()
   proxy.NewReverseProxy()
 }
 
-func TestInstallServcice(t * testing.T) {
+func TestInstallService(t * testing.T) {
   Setup()
   branches := git.LsRemote(REPO)
   branch := branches["master"]
@@ -60,7 +68,7 @@ func TestLoad(t * testing.T) {
     InstallEnvRaw: `[]`,
   }
 
-  fmt.Println(database.AddService(service))
+  database.AddService(service)
 
   Load()
   TearDown()
@@ -68,6 +76,8 @@ func TestLoad(t * testing.T) {
 
 func TearDown() {
   util.Rmdir(util.DataDir())
-  database.Instance.Close()
+  if database.Instance != nil {
+    database.Instance.Close()
+  }
   Close()
 }

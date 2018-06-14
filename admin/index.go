@@ -17,19 +17,15 @@ var Router * http.ServeMux
 func serve_static_asset(w http.ResponseWriter, r * http.Request) {
   p := r.URL.EscapedPath()
   urlpath := p
-  fmt.Println(urlpath)
 
   data, err := assets.Asset(fmt.Sprintf("resources/admin/%s", urlpath))
 
   if err == nil {
     w.Write(data)
     return
-  } else {
-    fmt.Printf("resources/admin/%s\n", urlpath)
   }
 
   data, err2 := assets.Asset(path.Join("resources/admin", urlpath, "index.html"))
-  fmt.Println(path.Join("resources/admin", urlpath, "index.html"), fmt.Sprintf("resources/admin/%s", urlpath), data, err, err2)
   if err2 == nil {
     w.Write(data)
     return
@@ -55,8 +51,6 @@ func Branches(w http.ResponseWriter, r * http.Request) {
   }
 
   repo := repo_qs[0]
-
-  fmt.Println("LS of", repo)
 
   defer func() {
     if r := recover(); r != nil {
@@ -142,8 +136,6 @@ func update_service(w http.ResponseWriter, r * http.Request) {
 
     installArgs := must_unmarshal(svc.InstallArgs)
     installEnv := must_unmarshal(svc.InstallEnv)
-
-    fmt.Println(args, env)
 
     svc.StartArgsRaw = args
     svc.StartEnvRaw = env

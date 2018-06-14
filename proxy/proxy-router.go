@@ -13,14 +13,14 @@ import (
   "reflect"
 )
 
-var transport * BetterRoundTripper = newBetterRoundTripper(nil)
+var transport * BetterRoundTripper = NewBetterRoundTripper(nil)
 var ProxyInstance * ReverseProxy
 
 type BetterRoundTripper struct {
   transport http.RoundTripper
 }
 
-func newBetterRoundTripper(tr http.RoundTripper) * BetterRoundTripper {
+func NewBetterRoundTripper(tr http.RoundTripper) * BetterRoundTripper {
   if tr == nil {
     tr = http.DefaultTransport
   }

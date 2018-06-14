@@ -1,5 +1,6 @@
 package main
 
+import "net"
 import "net/http"
 import "fmt"
 import "os"
@@ -8,13 +9,15 @@ import Proxy "github.com/jkk111/indigo/proxy"
 import "github.com/jkk111/indigo/admin"
 import "github.com/jkk111/indigo/database"
 import "github.com/jkk111/indigo/services"
+import "github.com/jkk111/indigo/sockets"
 
 var proxy = Proxy.NewReverseProxy()
 var srv http.Server
+var close chan os.Signal
+var ready chan bool = make(chan bool, 1)
 
 func cleanup(c chan os.Signal) {
   for sig := range c {
-    fmt.Println("Received Exit Signal", sig)
     database.Instance.Close()
     if sig == os.Interrupt {
       srv.Shutdown(nil)
@@ -23,9 +26,9 @@ func cleanup(c chan os.Signal) {
 }
 
 func init() {
-  c := make(chan os.Signal, 1)
-  signal.Notify(c, os.Interrupt)
-  go cleanup(c)
+  close = make(chan os.Signal, 1)
+  signal.Notify(close, os.Interrupt)
+  go cleanup(close)
 }
 
 func StartServer() {
@@ -34,6 +37,10 @@ func StartServer() {
   mux.Handle("/admin/", admin.Router)
 
   port := os.Getenv("PORT")
+  socket := os.Getenv("SOCKET")
+
+  var ln net.Listener
+  var err error
 
   if port == "" {
     port = ":80"
@@ -41,8 +48,20 @@ func StartServer() {
     port = fmt.Sprintf(":%s", port)
   }
 
-  srv = http.Server{Addr: port, Handler: mux}
-  if err := srv.ListenAndServe(); err != nil {
+  if socket != "" {
+    ln, err = sockets.Listen(socket)
+  } else {
+    ln, err = net.Listen("tcp", port)
+  }
+
+  if err != nil {
+    panic(err)
+  }
+
+  srv = http.Server{ Handler: mux }
+  ready <- true
+
+  if err := srv.Serve(ln); err != nil {
     fmt.Println(err)
   }
 }

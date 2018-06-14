@@ -123,7 +123,8 @@ func Setup() {
   table_setup_queries := string(assets.MustAsset("resources/setup.sql"))
 
   if err != nil {
-    fmt.Println(err)
+    fmt.Println(err, db_path)
+    panic(err)
   } else {
     MustExec(db, table_setup_queries)
     Exec(db, "INSERT INTO services(name, host, path) VALUES('static', '*', '/')")

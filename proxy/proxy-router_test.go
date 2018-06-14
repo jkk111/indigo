@@ -60,7 +60,7 @@ func TestAddRoute(t * testing.T) {
   go server2.Serve(ln2)
 
   cli := http.Client{
-    Transport: newBetterRoundTripper(nil),
+    Transport: NewBetterRoundTripper(nil),
   }
 
   headers := make(http.Header, 0)

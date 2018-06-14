@@ -4,36 +4,13 @@ import "net/http"
 import "fmt"
 import "os"
 import "os/signal"
-import "io/ioutil"
-import "os/user"
-import "path"
 import Proxy "github.com/jkk111/indigo/proxy"
 import "github.com/jkk111/indigo/admin"
 import "github.com/jkk111/indigo/database"
-import "github.com/jkk111/indigo/util"
 import "github.com/jkk111/indigo/services"
 
 var proxy = Proxy.NewReverseProxy()
 var srv http.Server
-
-const FILE_MODE = 0700 // Owner Accessible Only
-  
-func read_file(path string) string {
-  f, err := os.Open(path)
-
-  if err != nil {
-    panic(err)
-  }
-
-  defer f.Close()
-  data, err := ioutil.ReadAll(f)
-
-  if err != nil {
-    panic(err)
-  }
-
-  return string(data)
-}
 
 func cleanup(c chan os.Signal) {
   for sig := range c {
@@ -46,27 +23,9 @@ func cleanup(c chan os.Signal) {
 }
 
 func init() {
-  fmt.Println("Main Init")
-  current, err := user.Current()
-
-  if err != nil {
-    panic(err)
-  }
-
-  data_path := path.Join(current.HomeDir, ".indigo")
-  repo_path := path.Join(data_path, "repos")
-
-  util.Mkdir(data_path)
-  util.Mkdir(repo_path)
-  util.Hide(data_path)
-
   c := make(chan os.Signal, 1)
   signal.Notify(c, os.Interrupt)
   go cleanup(c)
-}
-
-func LookupEnv(key string) string {
-  return os.Getenv(key)
 }
 
 func StartServer() {
@@ -74,7 +33,7 @@ func StartServer() {
   mux.HandleFunc("/", proxy.Router)
   mux.Handle("/admin/", admin.Router)
 
-  port := LookupEnv("PORT")
+  port := os.Getenv("PORT")
 
   if port == "" {
     port = ":80"
@@ -89,6 +48,12 @@ func StartServer() {
 }
 
 func main() {
+  test_mode := os.Getenv("TEST")
+
+  if test_mode == "true" {
+    os.Exit(0)
+  }
+
   services.Load()
   StartServer()
 }

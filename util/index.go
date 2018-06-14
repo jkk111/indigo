@@ -10,6 +10,7 @@ import (
 )
 
 const FILE_MODE = 0700
+var BASE_NAME = ".indigo"
 
 func Mkdir(path string) {
   err := os.MkdirAll(path, FILE_MODE)
@@ -21,8 +22,7 @@ func Mkdir(path string) {
 }
 
 func Rmdir(path string) {
-  fmt.Println("Removing", path)
-  os.RemoveAll(path) 
+  os.RemoveAll(path)
 }
 
 func Exists(path string) bool {
@@ -47,7 +47,7 @@ func DataDir() string {
     panic(err)
   }
 
-  data_path := path.Join(current.HomeDir, ".indigo")
+  data_path := path.Join(current.HomeDir, BASE_NAME)
   return data_path
 }
 

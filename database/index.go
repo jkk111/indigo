@@ -64,14 +64,15 @@ func MustQuery(db * sqlx.DB, q string) * sqlx.Rows {
   return rows
 }
 
-func AddService(service * Service) {
+func AddService(service * Service) (sql.Result, error)  {
+  fmt.Println("Adding Service")
   sql := string(assets.MustAsset("resources/add_service.sql"))
-  fmt.Println(Instance.NamedExec(sql, service))
+  return Instance.NamedExec(sql, service)
 }
 
-func UpdateService(service * Service) {
+func UpdateService(service * Service) (sql.Result, error) {
   sql := string(assets.MustAsset("resources/update_service.sql"))
-  fmt.Println(Instance.NamedExec(sql, service))
+  return Instance.NamedExec(sql, service)
 }
 
 func Must(err error) {
@@ -108,8 +109,13 @@ func Services() []*Service {
   return services
 }
 
-func init() {
+func Setup() {
   fmt.Println("Initializing Database")
+
+  if Instance != nil {
+    fmt.Println("Database Already Connected, Closing")
+    Instance.Close()
+  }
 
   db_path := util.Path("store.db")
  
@@ -130,4 +136,8 @@ func init() {
 
   Instance = db
   fmt.Println("Database Ready")
+}
+
+func init() {
+  Setup()
 }

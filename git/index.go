@@ -7,7 +7,6 @@ import (
   "io/ioutil"
   "strings"
   "regexp"
-  "fmt"
   "path"
   "github.com/jkk111/indigo/util"
 )
@@ -30,7 +29,7 @@ func (this * Branch) String() string {
   return string(data)
 }
 
-func run(args ...string) string {
+func run(args ...string) (string, error) {
   cmd := exec.Command("git", args...)
   out, p_err := cmd.StdoutPipe()
   err, p_err2 := cmd.StderrPipe()
@@ -46,7 +45,7 @@ func run(args ...string) string {
   cmd.Start()
   reader := io.MultiReader(out, err)
   buf, read_err := ioutil.ReadAll(reader)
-  cmd.Wait()
+  run_err := cmd.Wait()
 
   if read_err != nil {
     panic(read_err)
@@ -58,17 +57,21 @@ func run(args ...string) string {
     panic("No Output")
   }
 
-  return output
+  return output, run_err
 }
 
 func (this * Branch) Branch() string {
   return this.Ref[ref_prefix_len:]
 }
 
-func (this * Branch) Clone() {
+func (this * Branch) Clone() bool {
   util.Rmdir(util.Path(path.Join("repos", this.Hash)))
-  run("clone", "-b", this.Branch(), this.Repo, util.Path(path.Join("repos", this.Hash)))
-  fmt.Println("Cloned")
+  _, err := run("clone", "-b", this.Branch(), this.Repo, util.Path(path.Join("repos", this.Hash)))
+
+  if err != nil {
+    return false
+  }
+  return true
 }
 
 func LsRemote(repo string) map[string]*Branch {
@@ -76,56 +79,26 @@ func LsRemote(repo string) map[string]*Branch {
     return nil
   }
 
+  remote, err := run("ls-remote", "--heads", repo)
 
-  remote := run("ls-remote", "--heads", repo)
+  if err != nil {
+    return nil
+  }
+
   remotes := strings.Split(remote, "\n")
   branches := make(map[string]*Branch, len(remotes))
   re := regexp.MustCompile(`\s+`)
 
   for _, branch := range remotes {
-    fmt.Println(branch)
     parts := re.Split(branch, -1)
+
+    if len(parts) != 2 {
+      return nil
+    }
+
     b := &Branch{ Repo: repo, Hash: parts[0], Ref: parts[1] }
     branches[b.Branch()] = b
   }
 
   return branches
-}
-
-func Remotes(repo string) []string {
-  str := run("ls-remote", "--heads", repo)
-  branches := strings.Split(str, "\n")
-  return branches
-}
-
-func BranchHash(repo string, branch string) string {
-  branch_pattern := fmt.Sprintf("refs/heads/%s", branch)
-  branches := Remotes(repo)
-
-  re := regexp.MustCompile(`\s+`)
-  for _, branch := range branches {
-    parts := re.Split(branch, -1)
-
-    if parts[1] == branch_pattern {
-      return parts[0] 
-    }
-  }
-
-  return ""
-}
-
-func Branches(repo string) []string {
-  branches := Remotes(repo)
-  re := regexp.MustCompile(`\s+`)
-
-  branch_names := make([]string, 0)
-
-  for _, branch := range branches {
-    parts := re.Split(branch, -1)
-    ref := parts[1]
-    i := strings.LastIndex(ref, "/")
-    branch_names = append(branch_names, ref[i + 1:])
-  }
-
-  return branch_names
 }

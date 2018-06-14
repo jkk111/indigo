@@ -6,20 +6,13 @@ import (
   "fmt"
   "time"
   "path"
-  "os/user"
   "github.com/jkk111/indigo/util"
 )
 
 var LOG_PATH string
 
 func init() {
-  usr, err := user.Current()
-
-  if err != nil {
-    panic(err)
-  }
-
-  LOG_PATH = path.Join(usr.HomeDir, ".indigo", "logs")
+  LOG_PATH = util.Path("logs")
   util.Mkdir(LOG_PATH)
 }
 
@@ -57,12 +50,11 @@ func CreateLogInstance(name string, out io.ReadCloser, err io.ReadCloser) * LogI
   fmt.Fprintf(ferr, "STDERR Log for %s Started at %d\n", name, start)
 
   go func() {
+    defer fout.Close()
+    defer ferr.Close()
     // Dump to file until process exits
     fmt.Println(io.Copy(fout, out))
     fmt.Println(io.Copy(ferr, err))
-
-    fout.Close()
-    ferr.Close()
   }()
 
   inst := &LogInstance{ 

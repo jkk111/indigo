@@ -98,6 +98,7 @@ func (this * BetterRoundTripper) RoundTrip(req * http.Request) (*http.Response, 
   dest := req.Header.Get("X-Dest")
 
   if dest == "" {
+    fmt.Println("Invalid Round Trip")
     return conn_refused(), nil
   }
 
@@ -175,12 +176,7 @@ func NewReverseProxy() * ReverseProxy {
 }
 
 func (this * ReverseProxy) AddRoute(domain string, url string, route string, local bool) {
-  fmt.Println("Add Route", this)
   this.proxy_rules.Add(domain, url, route, local)
-}
-
-func (this * ReverseProxy) RemoveRoute(domain string, url string) {
-
 }
 
 func (this * ReverseProxy) Router(w http.ResponseWriter, r * http.Request) {
@@ -194,8 +190,6 @@ func (this * ReverseProxy) Router(w http.ResponseWriter, r * http.Request) {
   if host == "" {
     host = "localhost"
   }
-
-  fmt.Println("Initial Host", host, path, r.Header["Host"])
 
   if host == "" {
     host = r.Host
@@ -254,7 +248,6 @@ func (this * ReverseProxy) Router(w http.ResponseWriter, r * http.Request) {
     proxy.ServeHTTP(w, r)
   
   } else {
-    fmt.Println("404", host, path)
     w.Write([]byte("Invalid Route"))
   }
 }

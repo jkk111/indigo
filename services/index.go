@@ -7,7 +7,6 @@ import (
   "os"
   "io"
   "fmt"
-  "strings"
   "regexp"
   "reflect"
   path "path/filepath"
@@ -28,42 +27,6 @@ type ActiveService struct {
   cmd * exec.Cmd
 }
 
-func ParseCommitList(input string, ref string) (string, bool) {
-  fmt.Println(input)
-  input = strings.TrimSpace(input)
-
-
-  if input == "" {
-    return "", false
-  }
-
-  hashes := strings.Split(input, "\n")
-  re := regexp.MustCompile(`\s+`)
-
-  fmt.Println(hashes)
-
-  for _, str := range hashes {
-    parts := re.Split(str, -1)
-
-    if parts[1] == ref {
-      return parts[0], true
-    }
-  }
-
-  return "", false
-}
-
-// Represents a specific clone of a repo!
-func RepoId(repo string) {
-  hash := git.BranchHash(repo, "master")
-
-  if hash == "" {
-    panic("Invalid Repo/Branch")
-  }
-
-  fmt.Println(hash)
-}
-
 func must_pipe(p io.ReadCloser, err error) io.ReadCloser {
   if err != nil {
     panic(err)
@@ -74,9 +37,6 @@ func must_pipe(p io.ReadCloser, err error) io.ReadCloser {
 
 func InstallService(service * database.Service, hash string) {
   dir := util.Path(path.Join("repos", hash))
-  fmt.Println(dir)
-
-  fmt.Println(util.Exists(dir), service.Install, service.InstallArgs)
 
   cmd := exec.Command(service.Install, service.InstallArgs...)
 
@@ -89,7 +49,9 @@ func InstallService(service * database.Service, hash string) {
 
   logger.CreateLogInstance(service.Name + "-install", stdout, stderr)
   err := cmd.Run()
+
   if err != nil {
+    fmt.Println(err)
     panic(err)
   }
 }

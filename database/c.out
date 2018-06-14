@@ -1,0 +1,24 @@
+mode: set
+github.com\jkk111\indigo\database\index.go:42.55,44.2 1 1
+github.com\jkk111\indigo\database\index.go:46.39,48.17 2 1
+github.com\jkk111\indigo\database\index.go:48.17,49.15 1 0
+github.com\jkk111\indigo\database\index.go:53.57,55.2 1 1
+github.com\jkk111\indigo\database\index.go:57.52,60.17 2 1
+github.com\jkk111\indigo\database\index.go:64.3,64.14 1 1
+github.com\jkk111\indigo\database\index.go:60.17,61.15 1 0
+github.com\jkk111\indigo\database\index.go:67.57,71.2 3 1
+github.com\jkk111\indigo\database\index.go:73.59,76.2 2 1
+github.com\jkk111\indigo\database\index.go:78.22,79.17 1 1
+github.com\jkk111\indigo\database\index.go:79.17,80.15 1 0
+github.com\jkk111\indigo\database\index.go:84.28,88.19 3 1
+github.com\jkk111\indigo\database\index.go:107.3,109.18 2 1
+github.com\jkk111\indigo\database\index.go:88.19,95.19 3 1
+github.com\jkk111\indigo\database\index.go:99.5,104.37 5 1
+github.com\jkk111\indigo\database\index.go:95.19,96.17 1 0
+github.com\jkk111\indigo\database\index.go:112.14,115.22 2 1
+github.com\jkk111\indigo\database\index.go:120.3,127.17 5 1
+github.com\jkk111\indigo\database\index.go:137.3,138.32 2 1
+github.com\jkk111\indigo\database\index.go:115.22,118.4 2 1
+github.com\jkk111\indigo\database\index.go:127.17,129.4 1 0
+github.com\jkk111\indigo\database\index.go:129.9,135.4 5 1
+github.com\jkk111\indigo\database\index.go:141.13,143.2 1 1

@@ -1,3 +1,0 @@
-@echo off
-go-bindata -debug -pkg assets -o assets/bindata.go resources/...
-go build && indigo.exe

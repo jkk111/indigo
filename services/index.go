@@ -127,7 +127,6 @@ func Load() {
   services := database.Services()
   proxy := Proxy.Instance()
   for _, service := range services {
-    fmt.Printf("%+v\n", service)
     env := service.Env
     instance_no := RunHistory[service.Name]
     RunCountMutex.Lock()

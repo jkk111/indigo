@@ -65,7 +65,6 @@ func MustQuery(db * sqlx.DB, q string) * sqlx.Rows {
 }
 
 func AddService(service * Service) (sql.Result, error)  {
-  fmt.Println("Adding Service")
   sql := string(assets.MustAsset("resources/add_service.sql"))
   return Instance.NamedExec(sql, service)
 }
@@ -113,7 +112,6 @@ func Setup() {
   fmt.Println("Initializing Database")
 
   if Instance != nil {
-    fmt.Println("Database Already Connected, Closing")
     Instance.Close()
   }
 
@@ -128,7 +126,7 @@ func Setup() {
     fmt.Println(err)
   } else {
     MustExec(db, table_setup_queries)
-    fmt.Println(Exec(db, "INSERT INTO services(name, host, path) VALUES('static', '*', '/')"))
+    Exec(db, "INSERT INTO services(name, host, path) VALUES('static', '*', '/')")
     Exec(db, "INSERT INTO services(name, host, path) VALUES('conversion', '*', '/conv')")
     Exec(db, "INSERT INTO services(name, host, path, enabled) VALUES('old_service', '*', '/old', 0)")
     db = db

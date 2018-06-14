@@ -150,7 +150,13 @@ func update_service(w http.ResponseWriter, r * http.Request) {
 
 func verify(w http.ResponseWriter, r * http.Request) {
   r.URL.Path = r.URL.Path[6:]
-  router.ServeHTTP(w, r)
+
+  if r.Header.Get("X-Verified") != "true" {
+    buf := assets.MustAsset("resources/admin/unauth.html")
+    w.Write(buf)
+  } else {
+    router.ServeHTTP(w, r)
+  }
 }
 
 func init() {

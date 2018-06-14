@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script type="text/javascript">
+    console.log(window.speechSynthesis.getVoices())
+    window.speechSynthesis.onvoiceschanged = () => {
+      var text = new SpeechSynthesisUtterance(`Your kind isn't welcome here, go be unauthenticated somewhere else`);
+      let voices = window.speechSynthesis.getVoices().filter(({name}) => name.toLowerCase().indexOf('english') > -1);
+      if(voices.length < 0) return
+      console.log(voices)
+      let voice = voices[Math.floor(Math.random() * voices.length)]
+      text.voice = voice;
+      console.log(voice, text)
+      window.speechSynthesis.speak(text)
+
+    }
+  </script>
+</head>
+<body>
+  Unverified! You do not have the required certificates installed to prove your identity
+</body>
+</html>
